@@ -2,7 +2,7 @@ from tgbot.loader import dp, bot
 from aiogram.dispatcher import FSMContext
 from aiogram import types
 from tgbot.buttons.user_buttons import menu_buttons, setting_buttons, alarm_buttons
-from tgbot.parser.parsing import get_html, get_data, get_html_ua
+from tgbot.parser.parsing import get_html, get_data, get_html_ua, get_html_us
 from tgbot.db.db_logging import update_user_info, get_userx
 from tgbot.buttons.inline_user import weather_day_choose, choose_lang
 from tgbot.locales.uk.strings import _
@@ -20,7 +20,7 @@ async def start(message: types.Message, state: FSMContext):
     await message.answer(_('Введите название города', lang), reply_markup=menu_buttons(message.from_user.id))
     await state.set_state('wait_city')
 
-@dp.message_handler(text=['🏙Город', '🏙Місто'], state="*")
+@dp.message_handler(text=['🏙Город', '🏙Місто', '🏙City'], state="*")
 async def choose_city(message: types.Message, state: FSMContext):
     get_user = get_userx(user_id=message.from_user.id)
     lang = get_user['lang']
@@ -39,10 +39,13 @@ async def show_city(message: types.Message, state: FSMContext):
 
     try:
         if lang == 'ru':
-            html = get_html(message.text)
+            html = get_html(get_user['city'])
+            data = get_data(html)
+        elif lang == 'uk':
+            html = get_html_ua(get_user['city'])
             data = get_data(html)
         else:
-            html = get_html_ua(message.text)
+            html = get_html_us(get_user['city'])
             data = get_data(html)
 
 
@@ -83,7 +86,7 @@ async def show_city(message: types.Message, state: FSMContext):
     except AttributeError as e:
         await message.answer(_('Похоже вы указали город не правильно.\nПопробуйте ввести еще раз', lang))
 
-@dp.message_handler(text='⛅️Погода', state="*")
+@dp.message_handler(text=['⛅️Погода', '⛅️Weather'], state="*")
 async def show_weather(message: types.Message, state: FSMContext):
 
 
@@ -96,8 +99,11 @@ async def show_weather(message: types.Message, state: FSMContext):
         if lang == 'ru':
             html = get_html(get_user['city'])
             data = get_data(html)
-        else:
+        elif lang == 'uk':
             html = get_html_ua(get_user['city'])
+            data = get_data(html)
+        else:
+            html = get_html_us(get_user['city'])
             data = get_data(html)
         if data[7] == '-':
             rain = _('Отсутствует', lang)
@@ -140,9 +146,13 @@ def message_user(user_id):
         if lang == 'ru':
             html = get_html(get_user['city'])
             data = get_data(html)
-        else:
+        elif lang == 'uk':
             html = get_html_ua(get_user['city'])
             data = get_data(html)
+        else:
+            html = get_html_us(get_user['city'])
+            data = get_data(html)
+
         if data[7] == '-':
             rain = _('Отсутствует', lang)
         else:
@@ -178,7 +188,7 @@ def message_user(user_id):
 
 
 
-@dp.message_handler(text=['⚙️Настройки', '⚙️Налаштування'], state="*")
+@dp.message_handler(text=['⚙️Настройки', '⚙️Налаштування', '⚙️Settings'], state="*")
 async def settings(message: types.Message, state: FSMContext):
     await state.finish()
     get_user = get_userx(user_id=message.from_user.id)
@@ -188,7 +198,7 @@ async def settings(message: types.Message, state: FSMContext):
 
 
 
-@dp.message_handler(text=['📩Уведомления', '📩Повідомлення'], state="*")
+@dp.message_handler(text=['📩Уведомления', '📩Повідомлення', '📩Message'], state="*")
 async def alarms(message: types.Message, state: FSMContext):
     await state.finish()
     get_user = get_userx(user_id=message.from_user.id)
@@ -199,7 +209,7 @@ async def alarms(message: types.Message, state: FSMContext):
 
 
 
-@dp.message_handler(text=['⬅️Назад', 'Главная', 'Головна'], state="*")
+@dp.message_handler(text=['⬅️Назад', 'Главная', 'Головна', '⬅️Back', 'Menu'], state="*")
 async def back(message: types.Message, state: FSMContext):
     await state.finish()
     get_user = get_userx(user_id=message.from_user.id)
@@ -207,7 +217,7 @@ async def back(message: types.Message, state: FSMContext):
 
     await message.answer(_('<b>Главное меню</b>', lang), reply_markup=menu_buttons(message.from_user.id))
 
-@dp.message_handler(text=['🌐Язык', '🌐Мова'], state="*")
+@dp.message_handler(text=['🌐Язык', '🌐Мова', '🌐Language'], state="*")
 async def change_lang(message: types.Message, state: FSMContext):
     await state.finish()
 
@@ -216,8 +226,10 @@ async def change_lang(message: types.Message, state: FSMContext):
 
     if lang == 'ru':
         ico = _('Русский🇷🇺', lang)
-    else:
+    elif lang == 'uk':
         ico = _('Украинский🇺🇦', lang)
+    else:
+        ico = _('Английский🇬🇧', lang)
 
     await message.answer(_('Текущий язык: ', lang) + ico + _('\nВыберите язык: ', lang), reply_markup=choose_lang())
 
@@ -232,8 +244,11 @@ async def language_choosen(query: types.CallbackQuery, state: FSMContext):
 
     if lang == 'ru':
         mova = '🇷🇺'
-    else:
+    elif lang == 'uk':
         mova = '🇺🇦'
+    else:
+        mova = '🇬🇧'
+
     await query.message.delete()
     await query.message.answer(_('Ваш язык успешно изменен на ', lang) + mova, reply_markup=menu_buttons(query.from_user.id))
 

@@ -8,7 +8,7 @@ def menu_buttons(user_id):
     lang = get_user['lang']
 
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.row('⛅️Погода', _('⚙️Настройки', lang))
+    keyboard.row(_('⛅️Погода', lang), _('⚙️Настройки', lang))
 
     return keyboard
 
@@ -20,7 +20,7 @@ def setting_buttons(user_id):
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.row(_('📩Уведомления', lang))
     keyboard.row(_('🌐Язык', lang), _('🏙Город', lang))
-    keyboard.row('⬅️Назад')
+    keyboard.row(_('⬅️Назад', lang))
 
     return keyboard
 

@@ -12,7 +12,7 @@ from tgbot.locales.uk.strings import _
 
 from datetime import datetime, time
 
-@dp.message_handler(text=['Утро, день', 'Ранок, день'], state="*")
+@dp.message_handler(text=['Утро, день', 'Ранок, день', 'Morning, day'], state="*")
 async def twice_day(message: types.Message, state: FSMContext):
     await state.finish()
     get_user = get_userx(user_id=message.from_user.id)
@@ -23,7 +23,7 @@ async def twice_day(message: types.Message, state: FSMContext):
     await message.answer(_('Уведомления о погоде будут приходить ежедневно в 7:00 и в 15:00', lang))
 
 
-@dp.message_handler(text='На завтра', state="*")
+@dp.message_handler(text=['На завтра', 'For tomorrow'], state="*")
 async def every_day(message: types.Message, state: FSMContext):
     await state.finish()
     get_user = get_userx(user_id=message.from_user.id)
@@ -48,7 +48,7 @@ async def chosen_time(query: types.CallbackQuery, state: FSMContext):
 
 
 
-@dp.message_handler(text=['Отписаться', 'Відписатися'], state="*")
+@dp.message_handler(text=['Отписаться', 'Відписатися', 'Unsubscribe'], state="*")
 async def twice_day(message: types.Message, state: FSMContext):
     await state.finish()
     get_user = get_userx(user_id=message.from_user.id)
@@ -83,7 +83,7 @@ async def send_message_scheduler():
 
         # Ожидаем 1 минуту перед проверкой следующего времени
         await asyncio.sleep(60)
-        print('wait')
+
 
 
 async def send_message_scheduler_evry():
@@ -103,4 +103,3 @@ async def send_message_scheduler_evry():
 
         # Ожидаем 1 минуту перед проверкой следующего времени
         await asyncio.sleep(60)
-        print('waitsec')

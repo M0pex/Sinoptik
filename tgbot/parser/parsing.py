@@ -15,6 +15,11 @@ def get_html_ua(city):
     response = requests.get(url)
     return response.text
 
+def get_html_us(city):
+    url = ("https://sinoptik.uk/weather/" + city)
+    response = requests.get(url)
+    return response.text
+
 
 def get_data(html):
     data = []

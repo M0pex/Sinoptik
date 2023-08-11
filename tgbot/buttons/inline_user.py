@@ -86,13 +86,15 @@ def alarm_time():
 
 def choose_lang():
 
-    keyboard = InlineKeyboardMarkup(row_width=2)
+    keyboard = InlineKeyboardMarkup(row_width=3)
 
     buttons = [
 
         InlineKeyboardButton('🇺🇦', callback_data='choose_language:uk'),
 
         InlineKeyboardButton('🇷🇺', callback_data='choose_language:ru'),
+
+        InlineKeyboardButton('🇬🇧', callback_data='choose_language:us'),
 
     ]
 
